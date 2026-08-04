@@ -1,0 +1,1480 @@
+/* Общие настройки для всей игры */
+body, html {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #000000;
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    overflow: hidden;
+}
+  
+.screen {
+    display: none;
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    padding: 20px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    opacity: 0; /* Изначально экран полностью прозрачный */
+}
+
+.screen.active {
+    display: flex;
+    /* Запускаем анимацию проявления: имя, длительность, плавность, фиксация конечного состояния */
+    animation: fadeIn 0.4s ease-out forwards;
+}
+
+/* Ключевые кадры для плавной анимации появления */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: scale(1.02); /* Экраны будут мягко приближаться из глубины */
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Главный экран */
+.center-content {
+    margin: auto;
+    text-align: center;
+}
+h1 { font-size: 36px; letter-spacing: 2px; margin-bottom: 10px; }
+.thanks { color: #8e8e93; font-size: 16px; margin-bottom: 30px; }
+.author { font-size: 18px; color: #ffffff; }
+
+/* 2. Настройки экрана Выбора уровней */
+#levels-screen {
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.85)), url('images/levels-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    overflow-y: auto;
+    justify-content: flex-start;
+}
+
+/* Заголовок экрана */
+#levels-screen h2 {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    font-size: 28px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    color: #ffffff;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.4);
+}
+
+/* Контейнер для кнопок */
+#levels-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    gap: 15px;
+    padding-bottom: 40px;
+}
+
+/* Общие базовые стили для кнопок уровней */
+.level-btn {
+    height: 55px;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.2s ease;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* ЭФФЕКТЫ ДЛЯ КНОПОК НА НОВОМ ФОНЕ */
+
+/* Пройденные уровни (Стильный зеленый неон) */
+.level-passed { 
+    background-color: rgba(52, 199, 89, 0.25); 
+    color: #34c759; 
+    border: 2px solid #34c759;
+    box-shadow: 0 0 10px rgba(52, 199, 89, 0.2);
+}
+.level-passed:hover {
+    background-color: rgba(52, 199, 89, 0.4);
+}
+
+/* Текущий доступный уровень (Пурпурный активный неон) */
+.level-current { 
+    background-color: #af52de; 
+    color: #ffffff; 
+    box-shadow: 0 0 15px rgba(175, 82, 222, 0.5);
+}
+.level-current:hover {
+    background-color: #963bbf;
+    transform: scale(1.02); /* Кнопка слегка увеличивается при наведении */
+}
+
+/* Заблокированные уровни (Матовые полупрозрачные кнопки) */
+.level-locked { 
+    background-color: rgba(255, 255, 255, 0.08); 
+    color: rgba(255, 255, 255, 0.3); 
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    cursor: not-allowed;
+}
+
+#game-screen {
+    /* Накладываем 80% затемнение, чтобы формулы круга ушли на дальний план и не мешали читать условия */
+    background-image: linear-gradient(rgba(10, 25, 41, 0.8), rgba(10, 25, 41, 0.85)), url('images/game-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Обновленная шапка со счетчиками */
+.game-header {
+    width: 100%;
+    max-width: 380px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+#timer-indicator { color: #ffcc00; font-weight: bold; letter-spacing: 0.5px; }
+#timer-indicator.time-danger { color: #ff3b30; animation: blink 0.4s infinite alternate; }
+
+@keyframes blink {
+    from { opacity: 1; transform: scale(1); }
+    to { opacity: 0.5; transform: scale(0.98); }
+}
+
+#question-area { 
+    margin: auto 0; 
+    width: 100%; 
+    display: flex; 
+    justify-content: center; 
+    word-wrap: break-word; 
+    font-weight: 500;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+}
+
+/* Элементы вопросов (матрицы, доски, фигуры) плавно проявляются при создании */
+#question-area > div, 
+#question-area > p,
+.matrix-grid,
+.matrix-grid-2x2,
+.geometry-item,
+.math-fraction {
+    animation: elementAppear 0.3s ease-out forwards;
+}
+
+@keyframes elementAppear {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Корректировка ячеек матриц, чтобы они не просвечивали фон */
+.matrix-cell, .chess-cell-white, .chess-cell-black {
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+/* Основные контейнеры-трансформеры */
+.layout-column { 
+    display: flex;
+    flex-direction: column; 
+    align-items: center; 
+    gap: 25px; /* Увеличили вертикальный отступ между текстом и элементами */
+    text-align: center; 
+    width: 100%;
+}
+
+.layout-row { 
+    display: flex;
+    flex-direction: row; 
+    align-items: center; 
+    justify-content: center; 
+    gap: 45px; /* Ключевое: увеличили расстояние между самими дробями, чтобы они не слипались */
+    text-align: center; 
+    width: 100%;
+    margin: 15px 0;
+}
+
+/* ГЕОМЕТРИЧЕСКИЕ ФИГУРЫ */
+.math-shape { 
+    display: block; 
+}
+
+.shape-circle { 
+    width: 100px; 
+    height: 100px; 
+    border: 3px solid #ffffff; 
+    border-radius: 50%; 
+    background-color: #1c1c1e; 
+}
+
+.shape-rectangle { 
+    width: 130px; 
+    height: 90px; 
+    border: 3px solid #ffffff; 
+    background-color: #1c1c1e; 
+}
+
+.shape-triangle {
+    width: 0;
+    height: 0;
+    border-left: 50px solid transparent;
+    border-right: 50px solid transparent;
+    border-bottom: 90px solid #ffffff; /* Белый треугольник */
+    background-color: transparent !important;
+}
+
+/* Контейнер для связки: фигура сверху, число снизу */
+.geometry-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.geometry-number {
+    font-size: 24px;
+    font-weight: bold;
+    color: #ffcc00; /* Золотистый цвет для чисел */
+}
+
+.math-fraction { 
+    display: flex; 
+    flex-direction: column; 
+    align-items: center; 
+    justify-content: center;
+    font-size: 32px; /* Чуть увеличили шрифт цифр */
+    font-weight: bold; 
+    min-width: 60px; /* Задали минимальную ширину, чтобы длинные слова (ДЕВЯТЬ) не сжимали дробь */
+}
+
+/* Настройка числителя и знаменателя, если внутри них лежат слова */
+.math-fraction > div {
+    padding: 0 10px; /* Создает защитные отступы по бокам от букв/цифр */
+    white-space: nowrap; /* Запрещает словам переноситься на новую строку внутри дроби */
+    letter-spacing: 1px; /* Слегка раздвигает буквы в словах типа ОДИН, ПЯТЬ */
+}
+
+.fraction-line { 
+    width: 100%; 
+    height: 3px; 
+    background-color: #ffffff; 
+    margin: 8px 0; /* Увеличили отступ от черты дроби до цифр сверху и снизу */
+    box-shadow: 0 1px 3px rgba(0,0,0,0.5);
+}
+
+/* КРУПНЫЕ СИННИЕ ПОЛЯ 3х3 (Уровень 2) */
+.matrix-grid { 
+    display: grid; 
+    grid-template-columns: repeat(3, 80px); 
+    grid-template-rows: repeat(3, 80px); 
+    gap: 0px; 
+    border: 4px solid #0044ff; 
+    background-color: #0044ff; 
+    margin: 10px; 
+}
+.matrix-cell {
+    background-color: #1c1c1e;              
+    color: #ffffff;                         
+    font-size: 28px;                        
+    font-weight: bold;
+    display: flex;
+    align-items: center;                    
+    justify-content: center;                 
+}
+.matrix-cell.center-red {
+    background-color: #ff3b30; /* Центральная красная клетка */
+}
+.dual-matrix-container {
+    display: flex;
+    flex-direction: row; /* Два поля строго в ряд */
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    margin: 15px 0;
+}
+
+/* ЧЕРНО-БЕЛЫЕ ШАХМАТНЫЕ ПОЛЯ (Уровень 3) */
+.matrix-grid-2x2 { 
+    display: grid; 
+    grid-template-columns: repeat(2, 80px); 
+    grid-template-rows: repeat(2, 80px); 
+    gap: 0px; 
+    border: 4px solid #ffffff; 
+    background-color: #ffffff; 
+    margin: 15px auto; 
+}
+.chess-cell-white { background-color: #ffffff; color: #000000; font-size: 40px; display: flex; align-items: center; justify-content: center; }
+.chess-cell-black { background-color: #2c2c2e; color: #ffffff; font-size: 40px; display: flex; align-items: center; justify-content: center; }
+.chess-task-container { display: flex; flex-direction: column; align-items: center; gap: 25px; width: 100%; }
+
+/* Контейнер ручного ввода ответа */
+.input-container {
+    width: 100%;
+    max-width: 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-bottom: 40px;
+}
+
+#user-answer {
+    background-color: #1c1c1e;
+    color: #ffffff;
+    border: 2px solid #ffffff;
+    height: 50px;
+    font-size: 20px;
+    text-align: center;
+    border-radius: 8px;
+    outline: none;
+    box-sizing: border-box;
+    /* Плавный переход цвета при ошибке за 0.2 секунды */
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.submit-btn {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    height: 50px;
+    font-size: 18px;
+    border-radius: 8px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.submit-btn:disabled {
+    background-color: #2c2c2e;
+    color: #8e8e93;
+    cursor: not-allowed;
+}
+
+#user-answer.wrong-input {
+    background-color: #ff3b30;
+    border-color: #ff3b30;
+    color: #ffffff;
+}
+
+#advisor-screen {
+    /* Плотное затемнение (85%), чтобы сфокусировать внимание на тексте работы над ошибками */
+    background-image: linear-gradient(rgba(10, 15, 10, 0.85), rgba(10, 15, 10, 0.9)), url('images/advisor-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+.subtitle { 
+    color: #a2a2a7; 
+    margin-bottom: 25px; 
+    font-size: 16px;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8);
+}
+
+#explanations-list {
+    width: 100%;
+    max-width: 500px; /* Ограничиваем ширину для удобства чтения */
+    overflow-y: auto;
+    flex-grow: 1;
+    margin-bottom: 20px;
+    padding-right: 5px;
+}
+
+.explanation-item {
+    margin-bottom: 20px;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    box-sizing: border-box;
+    /* Плавное проявление карточек теории */
+    animation: elementAppear 0.4s ease-out forwards;
+}
+
+.exp-q { 
+    font-weight: 700; 
+    margin-bottom: 8px; 
+    font-size: 16px; 
+    color: #ffffff;
+    line-height: 1.4;
+}
+
+.exp-a { 
+    color: #30d158; /* Более сочный неоново-зеленый для правильного ответа */
+    font-weight: 600;
+    margin-bottom: 6px; 
+    font-size: 15px; 
+}
+  
+
+.exp-e { 
+    color: #d1d1d6; /* Делаем текст объяснения намного ярче старого серого */
+    font-size: 14px; 
+    line-height: 1.5;
+}
+
+.next-btn {
+    width: 100%;
+    max-width: 300px;
+    background-color: #ffffff;
+    color: #000000;
+    height: 50px;
+    font-size: 18px;
+    border: none;
+    border-radius: 10px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+#game-over-screen {
+    /* Накладываем темно-красный и черный градиент, создавая атмосферу проигрыша */
+    background-image: linear-gradient(rgba(20, 0, 0, 0.85), rgba(0, 0, 0, 0.95)), url('images/game-over-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Обновленный заголовок проигрыша */
+.game-over-title { 
+    color: #ff3b30; 
+    font-size: 46px; 
+    font-weight: 900; 
+    letter-spacing: 4px; 
+    /* Мощное двойное неоновое свечение */
+    text-shadow: 0 0 20px rgba(255, 59, 48, 0.8), 0 0 40px rgba(255, 59, 48, 0.4); 
+    margin-bottom: 15px; 
+}
+
+/* Обновленный подзаголовок */
+.game-over-subtitle { 
+    color: #aeaeb2; /* Делаем надпись чуть светлее для контраста */
+    font-size: 18px; 
+    font-weight: 500;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+}
+
+/* Настройки скролла для экрана выбора уровней */
+#levels-screen {
+    overflow-y: auto; /* Разрешаем вертикальную прокрутку */
+    justify-content: flex-start; /* Оставляем элементы сверху */
+}
+
+/* Добавляем отступ снизу контейнеру кнопок */
+#levels-container {
+    padding-bottom: 40px; /* Чтобы последняя кнопка не прилипала к краю экрана */
+}
+
+/* 1. Настройки Главного экрана с умным затемнением */
+#main-screen {
+    /* Накладываем полупрозрачный темный градиент поверх картинки, чтобы приглушить формулы */
+    background-image: linear-gradient(rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0.85)), url('images/main-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+}
+
+/* Улучшение читаемости текста на Главном экране */
+#main-screen h1 {
+    font-size: 42px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #007aff; /* Яркий iOS-синий цвет в тон вашей картинки */
+    /* Добавляем неоновое свечение заголовку, чтобы он доминировал над фоном */
+    text-shadow: 0 0 20px rgba(0, 122, 255, 0.6), 0 0 40px rgba(0, 122, 255, 0.3);
+    margin-bottom: 20px;
+}
+
+#main-screen .thanks {
+    color: #e5e5ea; /* Делаем текст благодарности светло-серым (вместо старого темного #8e8e93) */
+    font-size: 16px;
+    line-height: 1.5;
+    max-width: 500px; /* Ограничиваем ширину, чтобы текст красиво ложился по центру */
+    margin: 0 auto 40px auto;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9); /* Тень под буквами полностью отделяет текст от формул на фоне */
+}
+
+#main-screen .author {
+    font-size: 18px;
+    font-weight: 600;
+    color: 	#EE82EE; /* Золотистый цвет для авторов Andrey&Lev */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.9);
+}
+
+/* Кнопки возврата в верхнем левом углу */
+.back-corner-btn {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #ffffff;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+.back-corner-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* Круглая кнопка Инфо (?) на экране уровней */
+#info-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    background: rgba(0, 122, 255, 0.2);
+    border: 2px solid #007aff;
+    color: #007aff;
+    font-size: 22px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(0, 122, 255, 0.4);
+    transition: all 0.2s ease;
+}
+#info-btn:hover { background: rgba(0, 122, 255, 0.4); }
+
+/* Всплывающее окно описания игры */
+#game-description-popup {
+    display: none;
+    position: absolute;
+    bottom: 80px;
+    right: 20px;
+    width: 260px;
+    background: rgba(10, 10, 10, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    padding: 15px;
+    border-radius: 12px;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #d1d1d6;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.6);
+    animation: elementAppear 0.3s ease-out;
+}
+
+/* Круглая кнопка подсказки (!) на игровом экране */
+#hint-action-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: rgba(255, 149, 0, 0.2);
+    border: 2px solid #ff9500;
+    color: #ff9500;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 0 10px rgba(255, 149, 0, 0.3);
+}
+
+/* Стили для системы оценки пешками на 20-м уровне */
+.rating-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+}
+.pawns-row {
+    display: flex;
+    gap: 10px;
+}
+.pawn-pwa {
+    font-size: 36px;
+    cursor: pointer;
+    filter: grayscale(100%);
+    transition: transform 0.1s ease, filter 0.2s ease;
+}
+.pawn-pwa.active {
+    filter: grayscale(0%) drop-shadow(0 0 8px #ffcc00);
+}
+
+.game-hint {
+    font-size: 13px;                  /* Маленький размер */
+    color: rgba(255, 255, 255, 0.35); /* Затемненный белый цвет (всего 35% яркости) */
+    font-weight: 400;
+    font-style: italic;               /* Курсив, чтобы отделить от сути задачи */
+    margin-top: 20px;                 /* Отступ вниз от матриц/текста */
+    text-align: center;
+    max-width: 320px;
+    word-wrap: break-word;
+    z-index: 1;                       /* Отодвигаем на задний план */
+    
+    /* Густая черная тень, чтобы буквы не сливались с картинками */
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 1), 0 0 10px rgba(0, 0, 0, 0.8);
+    
+    /* Плавное проявление при активации */
+    animation: elementAppear 0.4s ease-out forwards;
+}
+
+/* === ВСТАВЬТЕ ЭТОТ КУСОК В САМЫЙ КОНЕЦ style.css === */
+
+/* Полноэкранный темный фон под окном подсказки */
+#hint-modal-overlay {
+    display: none; /* Изначально скрыто */
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* Мягкое затемнение игрового поля */
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
+}
+
+/* Красивая скругленная карточка по центру экрана (в стиле Советчика) */
+#hint-modal-card {
+    background-color: rgba(20, 30, 45, 0.95); /* Глубокий сине-черный матовый фон */
+    border: 2px solid #ff9500; /* Оранжевая неоновая рамка под цвет кнопки "!" */
+    border-radius: 24px; /* Сильное скругление углов для эффекта круглой рамочки */
+    width: 85%;
+    max-width: 320px;
+    padding: 25px;
+    box-sizing: border-box;
+    text-align: center;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7), 0 0 15px rgba(255, 149, 0, 0.2);
+    
+    /* Плавное всплывание карточки из глубины */
+    animation: modalScaleUp 0.3s ease-out forwards;
+}
+
+@keyframes modalScaleUp {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+.hint-modal-header {
+    color: #ff9500;
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+}
+
+#hint-modal-text {
+    color: #ffffff;
+    font-size: 14px;
+    line-height: 1.5;
+    font-style: italic;
+    margin-bottom: 20px;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+}
+
+/* Кнопка "Понятно" внутри окна */
+.hint-modal-close {
+    background: #ff9500;
+    color: #000000;
+    border: none;
+    padding: 10px 25px;
+    font-size: 14px;
+    font-weight: bold;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(255, 149, 0, 0.3);
+    transition: background 0.2s;
+}
+.hint-modal-close:hover {
+    background: #e08400;
+}
+
+.matrix-mono {
+    font-family: "Courier New", Courier, monospace !important;
+    font-size: 24px;            
+    color: #ffffff;             
+    
+    /* СБЛИЖАЕМ СТРОКИ: Уменьшили межстрочный интервал с 1.5 до плотного 1.1 */
+    line-height: 1.1 !important;   
+    
+    margin: 20px 0;             
+    text-align: left;           
+    display: inline-block;      
+}
+
+/* Контейнер-ряд для производной */
+.derivative-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin: 25px 0;
+    font-family: "Times New Roman", Times, serif; /* Академический шрифт */
+}
+
+/* Компактная вертикальная дробь d/dx */
+.math-fraction-dx {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+}
+
+.dx-top, .dx-bottom {
+    font-size: 24px;
+    font-style: italic;
+    font-weight: 500;
+    line-height: 1; /* Полностью убирает лишние вертикальные отступы браузера */
+}
+
+/* Идеально тонкая и четкая горизонтальная линия дроби */
+.dx-line {
+    width: 100%;
+    height: 2px;
+    background-color: #ffffff;
+    margin: 3px 0; /* Минимальный зазор между буквами и чертой */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Выражение в скобках рядом с дробью */
+.math-expr {
+    font-size: 26px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+}
+
+/* === ВСТАВЬТЕ ЭТОТ КУСОК В САМЫЙ КОНЕЦ style.css === */
+
+/* Контейнер-ряд для интеграла */
+.integral-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    margin: 20px 0;
+    font-family: "Times New Roman", Times, serif; /* Математический строгий стиль */
+}
+
+/* Блок для знака и пределов */
+.integral-container {
+    display: inline-flex;
+    position: relative;
+    align-items: center;
+    padding: 0 10px;
+    height: 70px; /* Фиксированная высота для контроля пределов */
+}
+
+/* Огромный красивый знак интеграла */
+.integral-sign {
+    font-size: 54px;
+    font-weight: 300;
+    line-height: 1;
+    color: #ffffff;
+}
+
+/* Верхний предел (цифра 5) */
+.integral-limits-top {
+    position: absolute;
+    top: 0px;
+    left: 24px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffcc00; /* Золотистый цвет для пределов */
+}
+
+/* Нижний предел (цифра -5) */
+.integral-limits-bottom {
+    position: absolute;
+    bottom: -2px;
+    left: 14px;
+    font-size: 16px;
+    font-weight: bold;
+    color: #ffcc00;
+}
+
+/* Выражение x³ dx рядом с интегралом */
+.integral-expr {
+    font-size: 28px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    margin-left: 5px;
+}
+
+/* Горизонтальный ряд для всей векторной формулы (Жесткий строчный режим) */
+.vector-math-row {
+    display: flex !important;       /* Включаем флексбокс принудительно, убирая режим столбика */
+    flex-direction: row !important; /* Строго в ряд слева направо */
+    align-items: center !important; /* Выравнивание всех знаков строго по одной центральной оси */
+    justify-content: center;
+    gap: 6px;
+    margin: 25px auto;
+    font-family: "Times New Roman", Times, serif; 
+    font-size: 28px;
+    font-weight: 500;
+    width: max-content;             /* Сжимаем контейнер под размер формулы */
+}
+
+/* Контейнер для одной буквы со стрелочкой над ней */
+.vector-item {
+    display: flex !important;
+    flex-direction: column !important; /* Стрелочка строго НАД буквой */
+    align-items: center !important;
+    justify-content: center;
+    line-height: 1;
+    width: 20px;
+}
+
+/* Маленькая аккуратная стрелочка строго над буквой */
+.vector-arrow {
+    font-size: 14px;
+    height: 12px;
+    margin-bottom: -2px; /* Прижимает стрелочку ближе к букве */
+    color: #ffcc00; /* Делаем стрелочки золотистыми для красоты */
+}
+
+/* Сама буква вектора (курсивная по правилам математики) */
+.vector-letter {
+    font-style: italic;
+}
+
+/* Крупная и четкая точка скалярного произведения */
+.vector-dot {
+    font-size: 36px;
+    line-height: 1;
+    margin: 0 4px;
+}
+
+/* Знак перпендикулярности */
+.vector-perp {
+    font-size: 28px;
+    margin: 0 6px;
+    color: #30d158; /* Делаем знак перпендикулярности неоново-зеленым */
+}
+
+/* Текстовая вставка ", если" */
+.vector-text-space {
+    font-size: 20px;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    color: #aeaeb2;
+    margin: 0 10px;
+}
+
+/* Контейнер-ряд для математического предела (Строчный режим) */
+.limit-row {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center;
+    gap: 15px;
+    margin: 25px auto;
+    font-family: "Times New Roman", Times, serif; /* Строгий математический шрифт */
+    width: max-content;
+}
+
+/* Блок лимита (слово + подпись снизу строго в столбик) */
+.limit-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center;
+    line-height: 1;
+}
+
+.lim-text {
+    font-size: 32px;
+    font-weight: bold;
+    font-style: italic;
+    line-height: 0.9;
+}
+
+.lim-sub {
+    font-size: 13px;
+    color: #ffcc00; /* Золотистый цвет для устремления x */
+    margin-top: 4px;
+    letter-spacing: 0.5px;
+}
+
+/* Блок вертикальной дроби */
+.limit-fraction {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center;
+    width: max-content;
+}
+
+.limit-standart {
+    display: flex !important;            /* Выстраиваем элементы строго слева направо в один ряд */
+    flex-direction: row !important;      /* Выравниваем все знаки строго по одной центральной оси по вертикали */
+    align-items: center !important;      /* Центрируем строку на экране */
+    justify-content: flex-start !important;
+
+    gap: 12px;                           /* Комфортный зазор между элементами (символами/буквами) */
+    width: max-content;                  /* Сжимаем контейнер ровно под размер формулы */
+    margin: 5px auto 20px auto;          /* По часовой: верх(5), право(auto), низ(20), лево(auto) */
+    padding: 12px 24px 12px 0px;         /* По часовой: верх(4), право(24), низ(12), лево(0) */
+
+}
+
+.lim-in-row {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.1;
+    white-space: nowrap;                /* Запрещаем переносы внутри дроби */
+    padding: 2px 10px 2px 0px;
+}
+
+.lim-top, .lim-bottom {
+    font-size: 24px;
+    font-weight: 500;
+    line-height: 1.1;
+    padding: 2px 10px;
+    white-space: nowrap;                /* Запрещаем переносы внутри дроби */
+}
+
+/* Четкая разделительная линия дроби */
+.lim-line {
+    width: 100%;
+    height: 2px;
+    background-color: #ffffff;
+    margin: 5px 0;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.4);
+}
+
+/* Главный контейнер всей пирамиды */
+.pyramid-container {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 2px; /* Минимальный зазор между рядами */
+    margin: 20px auto;
+    width: max-content;
+}
+
+/* Горизонтальные ряды треугольников */
+.pyramid-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    gap: 4px; /* Небольшой зазор между треугольниками в одном ряду */
+}
+
+/* Стилизация одного треугольника */
+.triangle-cell {
+    position: relative;
+    width: 65px;
+    height: 56px;
+    background: rgba(0, 122, 255, 0.15); /* Полупрозрачный синий неон */
+    color: #ffffff;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex !important;
+    align-items: flex-end !important; /* Смещаем число к основанию треугольника */
+    justify-content: center !important;
+    padding-bottom: 8px; /* Чтобы число стояло ровно по центру внутренней площади */
+    box-sizing: border-box;
+    
+    /* Магия CSS: обрезаем квадратный блок в форме идеального треугольника */
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    
+    /* Добавляем неоновую обводку через фильтр (так как border не работает с clip-path) */
+    filter: drop-shadow(0 0 4px #007aff);
+    border-bottom: 2px solid #007aff; /* Дополнительное подчеркивание основания */
+}
+
+/* Выделение главной ячейки со знаком вопроса (?) */
+.triangle-cell.target-cell {
+    background: rgba(255, 59, 48, 0.25); /* Полупрозрачный красный неон */
+    color: #ff3b30;
+    filter: drop-shadow(0 0 6px #ff3b30);
+    border-bottom: 2px solid #ff3b30;
+}
+
+/* Контейнеры разделов */
+.section-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    animation: elementAppear 0.3s ease-out;
+}
+
+/* Крупные заголовки разделов */
+.section-title {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 30px;
+    font-size: 32px !important; /* Увеличили размер букв */
+    font-weight: 900;
+    letter-spacing: 3px;
+    color: #ffffff;
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+}
+
+/* Обертка для сетки кнопок уровней */
+.levels-grid-wrapper {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 320px;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+/* Яркая оранжевая кнопка возврата ниже кнопки Главная */
+.orange-back-btn {
+    position: absolute;
+    top: 65px; /* Сдвинута строго ниже кнопки Главная (у которой top: 20px) */
+    left: 20px;
+    background: rgba(255, 149, 0, 0.2);
+    border: 2px solid #ff9500;
+    color: #ff9500;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(255, 149, 0, 0.2);
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+.orange-back-btn:hover {
+    background: rgba(255, 149, 0, 0.4);
+    transform: scale(1.02);
+}
+
+/* Большая прямоугольная скругленная кнопка продолжения в конце списка */
+.continue-math-btn {
+    width: 100%;
+    max-width: 320px;
+    height: 60px;
+    margin-top: 15px;
+    margin-bottom: 40px;
+    background: linear-gradient(135deg, #007aff, #0056b3);
+    color: #ffffff;
+    border: none;
+    border-radius: 16px; /* Сильное прямоугольное скругление */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 122, 255, 0.4);
+    transition: all 0.2s ease;
+}
+.continue-math-btn:hover {
+    background: linear-gradient(135deg, #0088ff, #0066cc);
+    box-shadow: 0 6px 20px rgba(0, 122, 255, 0.6);
+    transform: translateY(-2px);
+}
+
+
+.raise-matrix-name {
+    display: inline-block !important;
+    transform: translateY(-18px) !important; /* Если нужно поднять еще выше, поменяйте на -12px */
+    vertical-align: middle !important;
+}
+
+/* === ВСТАВЬТЕ ЭТОТ КУСОК В САМЫЙ КОНЕЦ style.css === */
+
+/* Контейнер для красивой формулы сочетания */
+.combinatorics-formula {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-family: "Times New Roman", Times, serif !important; /* Строгий математический стиль */
+    font-size: 32px !important; /* Делаем формулу крупной и заметной */
+}
+
+/* Главная большая буква C */
+.math-c-letter {
+    font-size: 46px !important;
+    font-weight: bold !important;
+    font-style: italic !important;
+    line-height: 1 !important;
+}
+
+/* Блок-башенка для верхнего и нижнего индексов */
+.math-indices {
+    display: inline-flex !important;
+    flex-direction: column !important; /* Выстраиваем индексы строго друг под другом */
+    align-items: flex-start !important;
+    line-height: 1 !important;
+    height: 48px !important;
+    position: relative !important;
+    margin-left: 2px !important; /* Небольшой зазор от буквы C */
+}
+
+/* Верхний индекс (цифра 0) */
+.c-top {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #ffcc00 !important; /* Придаем золотистый цвет для акцента */
+    position: absolute !important;
+    top: -2px !important;
+}
+
+/* Нижний индекс (число 50) */
+.c-bottom {
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #007aff !important; /* Неоново-синий цвет для баланса */
+    position: absolute !important;
+    bottom: 2px !important;
+}
+
+/* Знак равенства и вопроса */
+.math-equal {
+    margin-left: 10px !important; /* Отступ индексов от знака равенства */
+    font-weight: bold !important;
+}
+
+.exp-log-sup {
+    font-size: 16px !important;        /* Делаем степень логарифма чуть меньше основного текста */
+    font-weight: bold !important;
+    color: #30d158 !important;         /* Подсвечиваем степень неоново-зеленым для стиля */
+    vertical-align: super !important;  /* Сдвигаем строго вверх над буквой e */
+    margin-left: 2px !important;       /* Небольшой зазор от основания e */
+}
+
+/* === ДОБАВЬТЕ ИЛИ ОБНОВИТЕ ЭТИ КЛАССЫ В САМОМ КОНЕЦ style.css === */
+
+/* Нижний индекс основания логарифма */
+.log-base-sub {
+    display: inline-block !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #ffcc00 !important; /* Красивое золотое основание */
+    transform: translateY(6px) !important; /* Мягко опускаем корень чуть ниже строки log */
+    margin: 0 2px !important;
+}
+
+/* Верхний индекс степени экспоненты */
+.exp-log-sup {
+    display: inline-block !important;
+    font-size: 16px !important;
+    font-weight: bold !important;
+    color: #30d158 !important; /* Неоново-зеленая степень */
+    transform: translateY(-10px) !important; /* Мягко поднимаем степень над буквой e */
+    margin-left: 1px !important;
+}
+
+/* === ВСТАВЬТЕ ЭТОТ КУСОК В САМЫЙ КОНЕЦ style.css === */
+
+/* Контейнер для плотной, крупной олимпиадной формулы */
+.log-olympiad-row {
+    display: flex !important;
+    flex-direction: row !important;   /* Строго в одну линию */
+    align-items: center !important;    /* Выравнивание по центру вертикали */
+    justify-content: center !important;/* Идеальное центрирование на экране */
+    gap: 2px !important;               /* Сжали пустые дыры между символами до минимума */
+    margin: 25px auto !important;
+    font-family: "Times New Roman", Times, serif !important;
+    font-size: 32px !important;        /* Сделали всю формулу крупной и читаемой */
+    color: #ffffff !important;
+    width: max-content !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8) !important;
+}
+
+/* Золотое основание логарифма — прижимаем вплотную снизу */
+.log-base-sub {
+    display: inline-block !important;
+    font-size: 16px !important;        /* Крупный, разборчивый корень */
+    font-weight: bold !important;
+    color: #ffcc00 !important;
+    transform: translateY(10px) !important; /* Опустили строго под буквы log */
+    margin-left: 1px !important;       /* Убрали гигантский отступ слева */
+    margin-right: 3px !important;      /* Минимальный зазор перед скобкой */
+}
+
+/* Красивый центрированный минус с небольшими отступами */
+.log-minus {
+    margin: 0 10px !important;         /* Симметричные отступы вокруг знака минус */
+    font-weight: bold !important;
+}
+
+/* Неоново-зеленая степень экспоненты — прижимаем вплотную сверху */
+.exp-log-sup {
+    display: inline-block !important;
+    font-size: 18px !important;        /* Крупный, читаемый логарифм степени */
+    font-weight: bold !important;
+    color: #30d158 !important;
+    transform: translateY(-14px) !important; /* Подняли строго над буквой e */
+    margin-left: 1px !important;       /* Прижали вплотную к букве e */
+}
+
+.game-level-header {
+    font-size: 28px !important;
+    font-weight: 900 !important;
+    letter-spacing: 2px !important;
+    color: #ff9500 !important; /* Яркий оранжевый неоновый цвет */
+    text-shadow: 0 0 15px rgba(255, 149, 0, 0.6);
+    margin-top: 10px !important;
+    margin-bottom: 20px !important;
+    text-align: center !important;
+    text-transform: uppercase;
+}
+
+.btn-error-flash {
+    background: linear-gradient(135deg, #ff3b30, #ff453a) !important; /* Насыщенный красный неон */
+    box-shadow: 0 0 20px rgba(255, 59, 48, 0.8) !important;
+    transform: scale(0.98);
+    transition: all 0.2s ease !important;
+}
+
+/* Контейнер для всей тригонометрической конструкции */
+.trig-lock-wrapper {
+    position: relative !important;
+    width: 280px;
+    height: 280px;
+    margin: 30px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Большой центральный круг */
+.trig-main-circle {
+    position: relative !important;
+    width: 220px;
+    height: 220px;
+    border: 3px solid #ffffff;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.15);
+    overflow: hidden;
+}
+
+/* Оси деления круга на 4 части (крест) */
+.trig-axis-v {
+    position: absolute !important;
+    top: 0; left: 50%; width: 2px; height: 100%;
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: translateX(-50%);
+}
+.trig-axis-h {
+    position: absolute !important;
+    top: 50%; left: 0; width: 100%; height: 2px;
+    background-color: rgba(255, 255, 255, 0.4);
+    transform: translateY(-50%);
+}
+
+/* Общий стиль для чисел внутри четвертей */
+.trig-quadrant {
+    position: absolute !important;
+    font-size: 24px;
+    font-weight: bold;
+    color: #aeaeb2;
+    width: 50px;
+    height: 50px;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+/* Позиционирование по секторам тригонометрии */
+.q-1 { top: 35px; right: 35px; } /* I четверть */
+.q-2 { top: 35px; left: 35px; }  /* II четверть */
+.q-3 { bottom: 35px; left: 35px; } /* III четверть */
+.q-4 { bottom: 35px; right: 35px; } /* IV четверть */
+
+/* Подсветка целевого сектора со знаком вопроса (?) */
+.trig-quadrant.target-quadrant {
+    color: #ff3b30 !important;
+    font-size: 28px;
+    text-shadow: 0 0 10px rgba(255, 59, 48, 0.6);
+}
+
+/* Маленькие круги в главных точках осей */
+.trig-node {
+    position: absolute !important;
+    width: 56px;
+    height: 56px;
+    border-radius: 50% !important;
+    background: #1c1c1e;
+    border: 2px solid #007aff; /* Яркий неоново-синий контур */
+    color: #007aff;
+    font-size: 18px;
+    font-weight: bold;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 0 10px rgba(0, 122, 255, 0.5);
+    z-index: 5;
+}
+/* Рассадка маленьких кругов строго по краям осей */
+.node-top    { top: 0; left: 50%; transform: translateX(-50%); }
+.node-right  { right: 0; top: 50%; transform: translateY(-50%); }
+.node-bottom { bottom: 0; left: 50%; transform: translateX(-50%); }
+.node-left   { left: 0; top: 50%; transform: translateY(-50%); }
+
+/* === ВСТАВЬТЕ ЭТОТ КУСОК В САМЫЙ КОНЕЦ style.css === */
+
+/* Выстраивает доски горизонтально, освобождая вертикальное место */
+.chess-compact-row {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: flex-start !important;
+    gap: 30px !important; /* Удобный зазор между досками */
+    margin: 10px auto !important;
+    width: max-content !important;
+}
+
+/* Обертка для каждой отдельной доски и её цифры */
+.chess-box-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+}
+
+/* Стили для крупных ярких подписей ходов под досками */
+.chess-yellow-label {
+    font-size: 28px !important;
+    font-weight: bold !important;
+    color: #ffcc00 !important;
+    text-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+}
+.chess-red-label {
+    font-size: 28px !important;
+    font-weight: bold !important;
+    color: #ff3b30 !important;
+    text-shadow: 0 0 10px rgba(255, 59, 48, 0.4);
+}
+
+/* Срезаем лишние внешние отступы у заголовка уровня, чтобы он не улетал вверх */
+.game-level-header {
+    margin-top: 5px !important;
+    margin-bottom: 12px !important;
+}
+
+/* Стилизация скрытой ячейки под цвет остальных крайних элементов матрицы */
+.matrix-cell.dark-corner-cell {
+    background: rgba(10, 25, 47, 0.85) !important; /* Глубокий тёмный матовый фон крайних клеток */
+    border: 2px solid rgba(0, 122, 255, 0.3) !important; /* Мягкая синяя обводка */
+    color: #ff3b30 !important; /* Оставляем знак вопроса ярко-красным для видимости */
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* === ВСТАВЬТЕ ЭТОТ КУСОК В САМЫЙ КОНЕЦ style.css === */
+
+/* Сетка для отображения матриц 3х3 в ряд */
+.matrix-grid-3x3 {
+    display: grid !important;
+    grid-template-columns: repeat(3, 55px) !important; /* Удобный размер ячеек */
+    grid-gap: 8px !important;
+    background: rgba(0, 122, 255, 0.15) !important; /* Синяя обводка всей матрицы */
+    border: 3px solid #007aff !important;
+    border-radius: 12px !important;
+    padding: 10px !important;
+}
+
+/* Все остальные крайние ячейки — Одинаковый красивый темный цвет */
+.matrix-cell.matrix-cell-dark {
+    background-color: #1c1c1e !important; /* Матовый темный графит */
+    color: #ffffff !important;
+    border: 1px solid rgba(255, 255, 255, 0.05) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    font-weight: bold !important;
+    border-radius: 6px !important;
+    height: 55px !important;
+    width: 55px !important;
+}
+
+/* Центральные ячейки матриц — Всегда сочные красные */
+.matrix-cell.matrix-cell-red {
+    background: linear-gradient(135deg, #ff3b30, #ff453a) !important; /* Красный неон */
+    color: #ffffff !important;
+    box-shadow: 0 0 15px rgba(255, 59, 48, 0.6) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 22px !important;
+    font-weight: bold !important;
+    border-radius: 6px !important;
+    height: 55px !important;
+    width: 55px !important;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+.game-title-animated-2 {
+    font-size: 42px !important;
+    font-weight: 900 !important;
+    color: #EE82EE !important;
+    text-transform: uppercase;
+    text-align: center;
+    margin-bottom: 30px;
+    
+    animation: laserReveal 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+  
+@keyframes laserReveal {
+    0% {
+        letter-spacing: 18px; /* Сильно растянуто */
+        filter: blur(12px);   /* Размыто в туман */
+        opacity: 0;
+        text-shadow: 0 0 60px #EE82EE; /* Изначально оранжевый туман */
+    }
+    60% {
+        filter: blur(3px);
+        opacity: 0.8;
+    }
+    100% {
+        letter-spacing: 4px;  /* Стандартный шаг букв */
+        filter: blur(0);      /* Полная четкость */
+        opacity: 1;
+        text-shadow: 0 0 20px #EE82EE, 0 0 30px rgba(138, 43, 226, 0.5); /* Четкий оранжевый неон */
+    }
+}

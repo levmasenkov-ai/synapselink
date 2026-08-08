@@ -1,55 +1,70 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="icon-192.png">
-
-    <script>
-    if ('serviceWorker' in navigator) {
-        navigator.serviceWorker.register('sw.js');
-    }
-    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Synapse Link</title>                                                                 <!-- ЗДЕСЬ НАЗВАНИЕ ИГРЫ -->
     <link rel="stylesheet" href="style.css">
 </head>
 <body> 
-
+  
+    <!-- 1. ГЛАВНЫЙ ЭКРАН -->
     <div id="main-screen" class="screen active">
         <div class="center-content">
             <h1 class="game-title-animated-2">Synapse Link</h1>
             <p class="thanks">Спасибо большое всем пользователям этой логической игры! Она будет обновляться с добавлением еще большего количества интересных и сложных уровней!</p>          <!-- ЗДЕСЬ БЛАГОДАРНОСТЬ -->
-            <p class="author">Game was created by Lev&Andrey.</p>  
+            <p class="author">Game was created by Lev&Andrey.</p>
+            
+            <!-- БЛОК УПРАВЛЕНИЯ ЗВУКОМ -->
+            <div class="audio-control-container">
+                <button id="audio-toggle-btn" class="audio-btn" onclick="toggleMute()">🔊 Звук: Вкл</button>
+                <div class="volume-slider-wrapper">
+                    <span class="volume-icon">🔈</span>
+                    <input type="range" id="volume-slider" min="0" max="1" step="0.05" value="0.5" oninput="changeVolume(this.value)">
+                    <span class="volume-icon">🔊</span>
+                </div>
+            </div>
+
+
+
+
+
+
             <button class="next-btn" onclick="navigateTo('levels-screen'); renderLevels();" style="margin-top: 20px;">Играть</button>    <!-- ЗДЕСЬ АВТОРЫ -->
         </div>
     </div>
- 
-    <div id="levels-screen" class="screen">
-        <button id="main-back-btn" class="back-corner-btn" onclick="navigateTo('main-screen')">⬅ Главная</button>
-        <button id="section-back-btn" class="orange-back-btn" onclick="switchSection('logic')" style="display: none;">⬅ К разделу Логика</button>
 
+    <!-- 2. УРОВНЕВЫЙ ЭКРАН -->
+    <div id="levels-screen" class="screen">
+        <!-- Кнопка Назад на главный экран -->
+        <button id="main-back-btn" class="back-corner-btn" onclick="navigateTo('main-screen')">⬅ Главная</button>
+        
+        <!-- Яркая оранжевая кнопка возврата к Логике (изначально скрыта) -->
+        <button id="section-back-btn" class="orange-back-btn" onclick="switchSection('logic')" style="display: none;">⬅ К разделу Логика</button>
+        
+        <!-- ПОД-ЭКРАН 1: РАЗДЕЛ ЛОГИКА -->
         <div id="section-logic" class="section-container">
             <h2 class="section-title">РАЗДЕЛ ЛОГИКА</h2>
             <div id="logic-levels-container" class="levels-grid-wrapper"></div>
             
+            <!-- Большая прямоугольная скругленная кнопка продолжения -->
             <button class="continue-math-btn" onclick="switchSection('math')">Продолжить прохождение Раздел математика ➔</button>
         </div>
 
-
+        <!-- ПОД-ЭКРАН 2: РАЗДЕЛ МАТЕМАТИКА -->
         <div id="section-math" class="section-container" style="display: none;">
             <h2 class="section-title">РАЗДЕЛ МАТЕМАТИКА</h2>
             <div id="math-levels-container" class="levels-grid-wrapper"></div>
         </div>
 
+        <!-- Круглая кнопка Инфо (?) -->
         <button id="info-btn" onclick="showGameDescription()">?</button>
         <div id="game-description-popup">Synapse Link — это увлекательная логическая игра-трансформер, разделенная на Логику и Математику! В некоторых уровнях есть подсказки, но постарайтесь пройти их самостоятелно! </div>
     </div>
 
+    <!-- 3. ИГРОВОЙ ЭКРАН -->
     <div id="game-screen" class="screen">
-
+        <!-- Кнопка Назад в верхнем левом углу -->
         <button class="back-corner-btn" onclick="clearInterval(timerInterval); navigateTo('levels-screen'); renderLevels();">⬅ Меню</button>
 
         <div class="game-header">
@@ -65,11 +80,12 @@
             <button id="submit-btn" class="submit-btn" onclick="checkTypedAnswer()" disabled>Ответить</button>
         </div>
 
-    
+        <!-- Кнопка подсказки (!) в нижнем правом углу -->
         <button id="hint-action-btn" onclick="showHiddenHint()" style="display: none;">!</button>
 
     <button id="hint-action-btn" onclick="showHiddenHint()" style="display: none;">!</button>
 
+        <!-- ВСТАВЬТЕ ЭТОТ БЛОК СЮДА -->
         <div id="hint-modal-overlay" onclick="closeHintModal()">
             <div id="hint-modal-card" onclick="event.stopPropagation()">
                 <div class="hint-modal-header">ПОДСКАЗКА</div>
@@ -79,7 +95,7 @@
         </div>
     </div>
 
-
+    <!-- 4. ЭКРАН СОВЕТЧИК -->
     <div id="advisor-screen" class="screen">
         <h2>ЭКРАН СОВЕТЧИК</h2>
         <p class="subtitle">Разбор пройденного уровня:</p>
@@ -87,6 +103,7 @@
         <button class="next-btn" onclick="backToLevels()">Далее</button>
     </div>
 
+    <!-- 5. ЭКРАН ПОРАЖЕНИЯ -->
     <div id="game-over-screen" class="screen">
         <div class="center-content">
             <h1 class="game-over-title">ИГРА ОКОНЧЕНА</h1>

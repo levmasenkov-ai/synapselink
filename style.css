@@ -612,6 +612,7 @@ h1 { font-size: 36px; letter-spacing: 2px; margin-bottom: 10px; }
 }
 .pawn-pwa.active {
     filter: grayscale(0%) drop-shadow(0 0 8px #ffcc00);
+    transform: scale(1.1);
 }
 
 .game-hint {
@@ -1411,8 +1412,190 @@ h1 { font-size: 36px; letter-spacing: 2px; margin-bottom: 10px; }
     width: 55px !important;
 }
 
+/* ==========================================================================
+   СТИЛИЗАЦИЯ БЛОКА ЗВУКА ПОД ТЕМАТИКУ SYNAPSE LINK (НЕОН И СУПЕР-ПЛАВНОСТЬ)
+   ========================================================================== */
 
+/* Главный контейнер-панель управления звуком */
+.audio-control-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin: 30px auto 15px auto;
+    
+    /* Темный футуристичный матовый фон */
+    background: rgba(10, 25, 47, 0.6); 
+    
+    /* Неоновая рамка в тон вашего главного синего заголовка игры */
+    border: 2px solid #007aff; 
+    border-radius: 16px;
+    padding: 18px 24px;
+    width: max-content;
+    box-sizing: border-box;
+    
+    /* Мягкое внешнее и внутреннее синее свечение */
+    box-shadow: 0 0 15px rgba(0, 122, 255, 0.25), 
+                inset 0 0 10px rgba(0, 122, 255, 0.15);
+    
+    /* Плавное появление при загрузке экрана */
+    animation: elementAppear 0.4s ease-out forwards;
+}
 
+/* Футуристичная кнопка Вкл/Выкл звук */
+.audio-btn {
+    background: rgba(0, 122, 255, 0.1);
+    border: 1px solid rgba(0, 122, 255, 0.4);
+    color: #ffffff;
+    padding: 10px 20px;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase; /* Делает текст строгим и технологичным */
+    cursor: pointer;
+    width: 160px;
+    
+    /* Плавный переход всех эффектов за 0.2 секунды */
+    transition: all 0.2s ease-in-out;
+    text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+/* Эффект при наведении или фокусе на кнопку */
+.audio-btn:hover {
+    background: rgba(0, 122, 255, 0.25);
+    border-color: #007aff;
+    box-shadow: 0 0 12px rgba(0, 122, 255, 0.5);
+    transform: translateY(-1px);
+}
+
+/* Эффект при активном клике */
+.audio-btn:active {
+    transform: translateY(1px);
+    box-shadow: 0 0 5px rgba(0, 122, 255, 0.3);
+}
+
+/* Контейнер для ползунка */
+.volume-slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* Эмодзи-иконки звука с эффектом неонового свечения */
+.volume-icon {
+    font-size: 14px;
+    user-select: none;
+    filter: drop-shadow(0 0 4px rgba(0, 122, 255, 0.6));
+    opacity: 0.8;
+}
+
+/* Стилизация самого трека (дорожки) ползунка */
+#volume-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 140px;
+    height: 5px;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.2s, opacity 0.2s;
+    border: 1px solid rgba(0, 122, 255, 0.2);
+}
+
+/* Эффект дорожки при наведении мыши */
+#volume-slider:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* Стилизация ползунка-бегунка (круглого элемента управления) */
+#volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #ffffff; /* Белое ядро для яркого контраста */
+    border: 2px solid #007aff; /* Синяя неоновая обводка бегунка */
+    box-shadow: 0 0 10px #007aff, 0 2px 4px rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+    transition: transform 0.15s ease, background-color 0.15s;
+}
+
+/* Увеличение бегунка при наведении на него */
+#volume-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.25);
+    background: #007aff;
+    border-color: #ffffff;
+}
+
+/* Анимация для выключенного состояния ползунка */
+#volume-slider:disabled {
+    cursor: not-allowed;
+    border-color: transparent;
+    background: rgba(255, 255, 255, 0.05);
+}
+#volume-slider:disabled::-webkit-slider-thumb {
+    background: #2c2c2e;
+    border-color: #8e8e93;
+    box-shadow: none;
+    cursor: not-allowed;
+    transform: scale(1);
+}
+
+/* Эффект тряски для инпута ответа */
+.shake-input {
+    animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+    transform: translate3d(0, 0, 0);
+}
+
+@keyframes shake {
+    10%, 90% { transform: translate3d(-2px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+    40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* МЕДИА-ЗАПРОС ДЛЯ СМАРТФОНОВ — ДЕСКТОП НЕ ИЗМЕНИТСЯ */
+@media (max-width: 550px) {
+    /* Чтобы матрицы 3х3 автоматически масштабировались под экран смартфона */
+    .matrix-grid-3x3 {
+        grid-template-columns: repeat(3, 42px) !important; /* Уменьшили ячейки на мобильных */
+        grid-gap: 5px !important;
+        padding: 6px !important;
+    }
+    
+    .matrix-cell.matrix-cell-dark, 
+    .matrix-cell.matrix-cell-red {
+        height: 42px !important;
+        font-size: 16px !important;
+    }
+
+    /* Исправление наложения широких кнопок и текстов */
+    .continue-math-btn {
+        height: auto !important;
+        padding: 12px 15px !important; /* Кнопка расширяется вертикально, если текст не влазит */
+        font-size: 14px !important;
+        line-height: 1.3 !important;
+        white-space: normal !important; /* Разрешаем перенос длинного текста на кнопке */
+    }
+
+    .audio-control-container {
+        margin: 15px auto !important; /* Уменьшили внешние отступы, чтобы не давить на текст */
+        padding: 12px 16px !important;
+    }
+
+    #main-screen h1 {
+        font-size: 32px !important; /* Делаем заголовок чуть компактнее на мобильных */
+    }
+
+    #main-screen .thanks {
+        font-size: 14px !important;
+        margin-bottom: 20px !important; /* Даем больше пространства для кнопок звука */
+    }
+}
 
 
 
@@ -1459,7 +1642,7 @@ h1 { font-size: 36px; letter-spacing: 2px; margin-bottom: 10px; }
     
     animation: laserReveal 1.8s cubic-bezier(0.25, 1, 0.5, 1) forwards;
 }
-  
+
 @keyframes laserReveal {
     0% {
         letter-spacing: 18px; /* Сильно растянуто */

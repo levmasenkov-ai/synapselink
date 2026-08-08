@@ -25,16 +25,29 @@ function navigateTo(screenId) {
 
     // Функция для безопасного запуска музыки с обходом блокировок
     const playMusic = (track) => {
-        track.volume = 0.25; // Комфортная громкость 25%
+        if (!track) return;
+        
+        // Разблокируем мобильный аудиоконтекст при старте трека
+        if (typeof initAudioContext === 'function') initAudioContext();
+        
+        // Считаем громкость с ползунка через мобильный фильтр
+        const slider = document.getElementById('volume-slider');
+        const sliderValue = slider ? parseFloat(slider.value) : 0.5;
+        const calculatedVolume = Math.pow(sliderValue, 2) * 0.4;
+        
+        track.volume = calculatedVolume; 
+        
         track.play().catch(err => {
-            console.log("Браузер заблокировал автозвук. Ожидаем клика пользователя...");
+            console.log("Браузер телефона заблокировал автозвук. Ожидаем тапа...");
             
-            // Единоразовый «будильник»: как только пользователь кликнет в любом месте, музыка включится
             const startOnInteraction = () => {
+                if (typeof initAudioContext === 'function') initAudioContext();
                 track.play().catch(e => console.log(e));
                 document.removeEventListener('click', startOnInteraction);
+                document.removeEventListener('touchstart', startOnInteraction);
             };
             document.addEventListener('click', startOnInteraction);
+            document.addEventListener('touchstart', startOnInteraction); // Специально для телефонов
         });
     };
 
@@ -2803,33 +2816,79 @@ function toggleMute() {
 
 
 // Функция изменения громкости ползунком (с повышенной точностью для малых величин)
-function changeVolume(volumeValue) {
-    const sliderValue = parseFloat(volumeValue);
-    const toggleBtn = document.getElementById('audio-toggle-btn');
-    const isNowMuted = toggleBtn.getAttribute('data-muted') === 'true';
-    
-    // МАКСИМАЛЬНЫЙ КОМФОРТНЫЙ ПОРОГ (0.4 = 40% от исходной громкости файла)
-    // Вы можете изменить это число (например, на 0.3 или 0.5), чтобы настроить верхний лимит
-    const MAX_ALLOWED_VOLUME = 0.4; 
-    
-    // Магическая формула: возводим значение ползунка в квадрат и умножаем на лимит.
-    // Это растягивает тихую зону на 70% длины ползунка и плавно подводит к максимуму в конце.
-    const calculatedVolume = Math.pow(sliderValue, 2) * MAX_ALLOWED_VOLUME;
-    
-    // Находим все аудио-элементы на странице и применяем вычисленную громкость
-    const allAudios = document.querySelectorAll('audio');
-    allAudios.forEach(audio => {
-        audio.volume = calculatedVolume;
-    });
-    
-    // Синхронизируем состояние кнопки при уводе в абсолютный ноль
-    if (sliderValue === 0 && !isNowMuted) {
-        toggleMute();
-    } else if (sliderValue > 0 && isNowMuted) {
-        toggleMute();
+// Глобальный аудиоконтекст для мобильных устройств
+let audioCtx = null;
+const audioSources = new Map();
+const audioGainNodes = new Map();
+
+function initAudioContext() {
+    if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
     }
 }
 
+function changeVolume(volumeValue) {
+    const sliderValue = parseFloat(volumeValue);
+    const toggleBtn = document.getElementById('audio-toggle-btn');
+    if (!toggleBtn) return;
+    
+    const isNowMuted = toggleBtn.getAttribute('data-muted') === 'true';
+    const MAX_ALLOWED_VOLUME = 0.4; 
+    const calculatedVolume = Math.pow(sliderValue, 2) * MAX_ALLOWED_VOLUME;
+    
+    // Инициализируем контекст при первом движении ползунка
+    initAudioContext();
+
+    // Управляем громкостью через Web Audio API (работает на телефонах)
+    const allAudios = document.querySelectorAll('audio');
+    allAudios.forEach(audio => {
+        if (audioCtx) {
+            if (!audioSources.has(audio)) {
+                try {
+                    const source = audioCtx.createMediaElementSource(audio);
+                    const gainNode = audioCtx.createGain();
+                    source.connect(gainNode);
+                    gainNode.connect(audioCtx.destination);
+                    audioSources.set(audio, source);
+                    audioGainNodes.set(audio, gainNode);
+                } catch(e) {
+                    // Источник уже мог быть инициализирован
+                }
+            }
+            
+            const currentGain = audioGainNodes.get(audio);
+            if (currentGain) {
+                currentGain.gain.value = isNowMuted ? 0 : calculatedVolume;
+            }
+        }
+        // Запасной десктопный вариант
+        audio.volume = calculatedVolume;
+    });
+    
+    // Управление интерфейсом кнопки звука (БЕЗ зацикливания и вызова toggleMute!)
+    if (sliderValue === 0 && !isNowMuted) {
+        toggleBtn.setAttribute('data-muted', 'true');
+        toggleBtn.innerHTML = "❌ Звук: Выкл";
+        toggleBtn.style.borderColor = "#ff3b30";
+        const slider = document.getElementById('volume-slider');
+        if (slider) slider.style.opacity = "0.5";
+    } else if (sliderValue > 0 && isNowMuted) {
+        toggleBtn.setAttribute('data-muted', 'false');
+        toggleBtn.innerHTML = "🔊 Звук: Вкл";
+        toggleBtn.style.borderColor = "rgba(255, 255, 255, 0.2)";
+        const slider = document.getElementById('volume-slider');
+        if (slider) {
+            slider.style.opacity = "1";
+            slider.disabled = false;
+        }
+        audioGainNodes.forEach(gainNode => {
+            gainNode.gain.value = calculatedVolume;
+        });
+    }
+}
 
 // Принудительная инициализация при старте страницы
 window.addEventListener('DOMContentLoaded', () => {

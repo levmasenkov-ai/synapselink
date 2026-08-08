@@ -24,13 +24,7 @@
                     <span class="volume-icon">🔊</span>
                 </div>
             </div>
-
-
-
-
-
-
-            <button class="next-btn" onclick="navigateTo('levels-screen'); renderLevels();" style="margin-top: 20px;">Играть</button>    <!-- ЗДЕСЬ АВТОРЫ -->
+            <button class="next-btn" onclick="if(typeof initAudioContext==='function')initAudioContext(); navigateTo('levels-screen'); renderLevels();" style="margin-top: 20px;">Играть</button>
         </div>
     </div>
 

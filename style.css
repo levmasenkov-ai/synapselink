@@ -1661,3 +1661,72 @@ h1 { font-size: 36px; letter-spacing: 2px; margin-bottom: 10px; }
         text-shadow: 0 0 20px #EE82EE, 0 0 30px rgba(138, 43, 226, 0.5); /* Четкий оранжевый неон */
     }
 }
+
+/* МЕДИА-ЗАПРОС ДЛЯ МОБИЛЬНЫХ ТЕЛЕФОНОВ (ЭКРАНЫ МЕНЬШЕ 550px) */
+@media (max-width: 550px) {
+    /* 1. ИСПРАВЛЕНИЕ НАЛОЖЕНИЯ В ШАПКЕ */
+    .game-screen, #game-screen {
+        padding-top: 70px !important; /* Опускаем весь игровой контент вниз, освобождая место под кнопку Меню */
+    }
+
+    .back-corner-btn {
+        top: 15px !important;
+        left: 15px !important;
+        padding: 6px 10px !important;
+        font-size: 13px !important;
+    }
+
+    .game-header {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        margin-top: 5px !important;
+        font-size: 14px !important; /* Слегка уменьшаем шрифт счетчиков */
+    }
+
+    /* 2. МАСШТАБИРОВАНИЕ ШАХМАТНЫХ ДОСОК ДЛЯ УРОВНЯ 3 */
+    .matrix-grid { 
+        grid-template-columns: repeat(3, 45px) !important; /* Уменьшаем ячейки доски 3х3 с 80px до 45px */
+        grid-template-rows: repeat(3, 45px) !important;
+        border-width: 2px !important;
+    }
+
+    .matrix-grid-2x2 { 
+        grid-template-columns: repeat(2, 45px) !important; /* Уменьшаем ячейки доски 2х2 с 80px до 45px */
+        grid-template-rows: repeat(2, 45px) !important;
+        border-width: 2px !important;
+    }
+
+    /* Уменьшаем размер шахматных фигур внутри маленьких ячеек */
+    .chess-cell-white, .chess-cell-black {
+        font-size: 24px !important; 
+    }
+
+    /* Делаем подписи под досками чуть компактнее */
+    .chess-yellow-label, .chess-red-label {
+        font-size: 20px !important;
+        margin-top: 4px !important;
+    }
+
+    .chess-compact-row {
+        gap: 15px !important; /* Сближаем доски, чтобы они гарантированно встали в один ряд */
+    }
+
+    /* 3. ОПТИМИЗАЦИЯ ПОЛЕЙ ВВОДА И КНОПОК */
+    .input-container {
+        max-width: 100% !important;
+        gap: 10px !important;
+        margin-bottom: 20px !important;
+    }
+
+    #user-answer {
+        height: 45px !important;
+        font-size: 18px !important;
+    }
+
+    .submit-btn {
+        height: 45px !important;
+        font-size: 16px !important;
+    }
+}
